@@ -1,29 +1,30 @@
-'use client'
+"use client";
 
-import React from 'react'
-import { Menu, X } from 'lucide-react'
+import React from "react";
+import { Menu, X } from "lucide-react";
+import CustButton from "./custom-components/CustButton";
 
 const menuItems = [
   {
-    name: 'Home',
-    href: '#',
+    name: "Home",
+    href: "#",
   },
   {
-    name: 'About',
-    href: '#',
+    name: "About",
+    href: "#",
   },
   {
-    name: 'Contact',
-    href: '#',
+    name: "Contact",
+    href: "#",
   },
-]
+];
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false)
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   return (
     <div className="relative w-full bg-white">
@@ -43,7 +44,7 @@ export default function Header() {
               />
             </svg>
           </span>
-          <span className="font-bold">Fr. Ferriera</span>
+          <span className="font-bold">Fr. Ferrier</span>
         </div>
         <div className="hidden lg:block">
           <ul className="inline-flex space-x-8">
@@ -51,7 +52,7 @@ export default function Header() {
               <li key={item.name}>
                 <a
                   href={item.href}
-                  className="text-sm font-semibold text-gray-800 hover:text-gray-900"
+                  className="text-md font-semibold text-gray-800 hover:text-gray-900"
                 >
                   {item.name}
                 </a>
@@ -60,12 +61,7 @@ export default function Header() {
           </ul>
         </div>
         <div className="hidden lg:block">
-          <button
-            type="button"
-            className="rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-          >
-            Button text
-          </button>
+          <CustButton label="sign-in"/>
         </div>
         <div className="lg:hidden">
           <Menu onClick={toggleMenu} className="h-6 w-6 cursor-pointer" />
@@ -130,5 +126,5 @@ export default function Header() {
         )}
       </div>
     </div>
-  )
+  );
 }

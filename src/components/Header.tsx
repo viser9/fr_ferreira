@@ -51,7 +51,7 @@ export default function Header() {
               <li key={item.name}>
                 <a
                   href={item.href}
-                  className="text-sm font-semibold text-custom-green hover:text-custom-hover-green"
+                  className="text-sm font-semibold text-gray-800 hover:text-gray-900"
                 >
                   {item.name}
                 </a>

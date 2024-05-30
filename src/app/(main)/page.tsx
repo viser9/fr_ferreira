@@ -1,7 +1,10 @@
+'use client'
+import { TextParallaxContentExample } from "@/components/TextParallaxContent";
+
 const HomePage = () => {
     return (
         <>
-            Home Page
+            <TextParallaxContentExample/>
         </>
     )
 }

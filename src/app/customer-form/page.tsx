@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, ChangeEvent } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/utils/cn";
@@ -12,14 +12,61 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/Dialog";
 import CustButton from "@/components/custom-components/CustButton";
+import { Checkbox } from "@/components/CheckBox";
 
 export default function SignupFormDemo() {
+  const [formData, setFormData] = useState({
+    age: "",
+    gender: "",
+    fullname: "",
+    dob: "",
+    address: "",
+    city: "",
+    state: "",
+    phoneNo: "",
+    image: "",
+    guardName: "",
+    relativeName: "",
+    relativeAddress: "",
+    relativeNumber: "",
+  });
+
+  const [errors, setErrors] = useState<{ phoneNo: string }>({
+    phoneNo: "",
+  });
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    if (id === "phoneNo" || id === "relativeNumber") {
+      setFormData((prevData) => ({
+        ...prevData,
+        [id]: "+91" + value,
+      }));
+    }
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form submitted");
+    console.log("Form Submitted", formData);
   };
+
+  const acceptConditon = () => {
+    setErrors({ phoneNo: "" });
+    if (formData.phoneNo.length < 12 || formData.relativeNumber.length < 12) {
+      setErrors({ ...errors, phoneNo: "Invalid Phone Number" });
+      return;
+    }
+    console.log(formData);
+  };
+
   return (
     <div className="flex justify-center items-center sm:h-screen">
       <div className="max-w-md w-full mx-auto rounded-2xl md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-gradient-to-b dark:from-neutral-950 dark:to-slate-700">
@@ -34,21 +81,45 @@ export default function SignupFormDemo() {
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
             <LabelInputContainer>
               <Label htmlFor="fullname">Full name</Label>
-              <Input id="fullname" placeholder="Tyler" type="text" />
+              <Input
+                id="fullname"
+                placeholder="Tyler"
+                type="text"
+                value={formData.fullname}
+                onChange={handleChange}
+              />
             </LabelInputContainer>
             <LabelInputContainer>
               <Label htmlFor="dob">DOB</Label>
-              <Input id="dob" placeholder="dd/mm/yy" type="date" />
+              <Input
+                id="dob"
+                placeholder="dd/mm/yy"
+                type="date"
+                value={formData.dob}
+                onChange={handleChange}
+              />
             </LabelInputContainer>
           </div>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
             <LabelInputContainer>
               <Label htmlFor="age">Age</Label>
-              <Input id="age" placeholder="18" type="number" />
+              <Input
+                id="age"
+                placeholder="18"
+                type="number"
+                value={formData.age}
+                onChange={handleChange}
+              />
             </LabelInputContainer>
             <LabelInputContainer>
               <Label htmlFor="gender">Gender</Label>
-              <Input id="gender" type="text" placeholder="M/F" />
+              <Input
+                id="gender"
+                type="text"
+                placeholder="M/F"
+                value={formData.gender}
+                onChange={handleChange}
+              />
             </LabelInputContainer>
           </div>
 
@@ -58,36 +129,90 @@ export default function SignupFormDemo() {
               id="address"
               placeholder="24-bermingham palace"
               type="text"
+              value={formData.address}
+              onChange={handleChange}
             />
           </LabelInputContainer>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
             <LabelInputContainer>
               <Label htmlFor="city">City</Label>
-              <Input id="city" placeholder="london" type="text" />
+              <Input
+                id="city"
+                placeholder="london"
+                type="text"
+                value={formData.city}
+                onChange={handleChange}
+              />
             </LabelInputContainer>
             <LabelInputContainer>
               <Label htmlFor="state">State</Label>
-              <Input id="state" placeholder="solid" type="text" />
+              <Input
+                id="state"
+                placeholder="solid"
+                type="text"
+                value={formData.state}
+                onChange={handleChange}
+              />
             </LabelInputContainer>
           </div>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
             <LabelInputContainer>
               <Label htmlFor="image">Image</Label>
-              <Input id="image" placeholder="image" type="text" />
+              <Input
+                id="image"
+                placeholder="image"
+                type="text"
+                value={formData.image}
+                onChange={handleChange}
+              />
             </LabelInputContainer>
             <LabelInputContainer>
               <Label htmlFor="phoneNo">Phone Number</Label>
-              <Input id="phoneN0" placeholder="+9198765432" type="text" />
+              <Input
+                id="phoneNo"
+                placeholder="9876543210"
+                type="text"
+                value={formData.phoneNo}
+                onInput={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  event.target.value = event.target.value
+                    .replace(/[^0-9.]/g, "")
+                    .replace(/(\..*?)\..*/g, "$1");
+                }}
+                onChange={handleChange}
+              />
+              {errors.phoneNo && (
+                <div className="text-red-500">Invalid Phone Number</div>
+              )}
             </LabelInputContainer>
           </div>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
             <LabelInputContainer>
-              <Label htmlFor="relName">Relative Name name</Label>
-              <Input id="relName" placeholder="John" type="text" />
+              <Label htmlFor="relName">Relative Name</Label>
+              <Input
+                id="relativeName"
+                placeholder="John"
+                type="text"
+                value={formData.relativeName}
+                onInput={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  event.target.value = event.target.value
+                    .replace(/[^0-9.]/g, "")
+                    .replace(/(\..*?)\..*/g, "$1");
+                }}
+                onChange={handleChange}
+              />
             </LabelInputContainer>
             <LabelInputContainer>
-              <Label htmlFor="phoneNo">Relative Phone Number</Label>
-              <Input id="phoneN0" placeholder="+9198765432" type="text" />
+              <Label htmlFor="relativeNumber">Relative Phone Number</Label>
+              <Input
+                id="relativeNumber"
+                placeholder="9876543210"
+                type="text"
+                value={formData.relativeNumber}
+                onChange={handleChange}
+              />
+              {errors.phoneNo && (
+                <div className="text-red-500">Invalid Phone Number</div>
+              )}
             </LabelInputContainer>
           </div>
           <LabelInputContainer className="mb-4">
@@ -96,8 +221,19 @@ export default function SignupFormDemo() {
               id="relativeAddress"
               placeholder="24-bermingham palace"
               type="text"
+              value={formData.relativeAddress}
+              onChange={handleChange}
             />
           </LabelInputContainer>
+          <div className="flex font-medium text-white items-center space-x-2 m-3">
+            <Checkbox id="terms" />
+            <label
+              htmlFor="terms"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Accept terms and conditions
+            </label>
+          </div>
           <Dialog>
             <DialogTrigger asChild>
               <button className="relative px-6 py-2 font-medium rounded-lg bg-indigo-500 text-white w-fit transition shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]">
@@ -115,12 +251,19 @@ export default function SignupFormDemo() {
               </DialogHeader>
               <DialogFooter>
                 <div className="flex justify-around">
-                  <button className="relative px-6 py-2 font-medium rounded-lg bg-indigo-500 text-white w-fit transition shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]">
-                    Reject &#x2718;
-                                  </button>
-                  <button className="relative px-6 py-2 font-medium rounded-lg bg-indigo-500 text-white w-fit transition shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]">
-                    Accept &#x2714;
-                  </button>
+                  <DialogClose asChild>
+                    <button className="relative px-6 py-2 font-medium rounded-lg bg-indigo-500 text-white w-fit transition shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]">
+                      Reject &#x2718;
+                    </button>
+                  </DialogClose>
+                  <DialogClose asChild>
+                    <button
+                      onClick={acceptConditon}
+                      className="relative px-6 py-2 font-medium rounded-lg bg-indigo-500 text-white w-fit transition shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
+                    >
+                      Accept &#x2714;
+                    </button>
+                  </DialogClose>
                 </div>
               </DialogFooter>
             </DialogContent>

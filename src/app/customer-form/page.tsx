@@ -14,8 +14,8 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/components/Dialog";
-import CustButton from "@/components/custom-components/CustButton";
 import { Checkbox } from "@/components/CheckBox";
+
 
 export default function SignupFormDemo() {
   const [formData, setFormData] = useState({
@@ -38,7 +38,10 @@ export default function SignupFormDemo() {
     phoneNo: "",
   });
 
+  const [permission, setPermission] = useState(false);
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+
     const { id, value } = e.target;
     if (id === "phoneNo" || id === "relativeNumber") {
       setFormData((prevData) => ({
@@ -52,20 +55,18 @@ export default function SignupFormDemo() {
     }));
   };
 
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted");
-    console.log("Form Submitted", formData);
-  };
-
-  const acceptConditon = () => {
     setErrors({ phoneNo: "" });
-    if (formData.phoneNo.length < 12 || formData.relativeNumber.length < 12) {
+    if (formData.phoneNo.length < 10 || formData.relativeNumber.length < 10) {
       setErrors({ ...errors, phoneNo: "Invalid Phone Number" });
       return;
     }
-    console.log(formData);
+    console.log("Form Submitted", formData);
+    console.log(permission);
   };
+
 
   return (
     <div className="flex justify-center items-center sm:h-screen">
@@ -226,48 +227,38 @@ export default function SignupFormDemo() {
             />
           </LabelInputContainer>
           <div className="flex font-medium text-white items-center space-x-2 m-3">
-            <Checkbox id="terms" />
-            <label
-              htmlFor="terms"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Accept terms and conditions
-            </label>
-          </div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <button className="relative px-6 py-2 font-medium rounded-lg bg-indigo-500 text-white w-fit transition shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]">
-                Sign up &rarr;
-                <BottomGradient />
-              </button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px] w-[400px] backdrop-blur-sm">
-              <DialogHeader>
-                <DialogTitle className="text-white">Ferrier</DialogTitle>
-                <DialogDescription className="text-white">
-                  By submitting the details you are accepting to agree to share
-                  the details with the institution
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <div className="flex justify-around">
-                  <DialogClose asChild>
-                    <button className="relative px-6 py-2 font-medium rounded-lg bg-indigo-500 text-white w-fit transition shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]">
-                      Reject &#x2718;
-                    </button>
-                  </DialogClose>
-                  <DialogClose asChild>
-                    <button
-                      onClick={acceptConditon}
-                      className="relative px-6 py-2 font-medium rounded-lg bg-indigo-500 text-white w-fit transition shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
-                    >
-                      Accept &#x2714;
-                    </button>
-                  </DialogClose>
+            <Dialog>
+              <Checkbox id="terms"/>
+              <DialogTrigger asChild>
+                <div className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 hover:text-gray-400">
+                  Accept terms and conditions
                 </div>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[500px] w-[400px] backdrop-blur-sm">
+                <DialogHeader>
+                  <DialogTitle className="text-slate-200">Ferrier</DialogTitle>
+                  <DialogDescription className="text-slate-400">
+                    By submitting the details you are accepting to agree to
+                    share the details with the institution
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <div className="flex justify-around">
+                    <DialogClose asChild>
+                      <button className="relative px-6 py-2 font-medium rounded-lg bg-indigo-500 text-white w-fit transition shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]">
+                        Close &#x2718;
+                      </button>
+                    </DialogClose>
+                  </div>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <button type="submit" className="relative px-6 py-2 font-medium rounded-lg bg-indigo-500 text-white w-fit transition shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]">
+            Sign up &rarr;
+            <BottomGradient />
+          </button>
         </form>
       </div>
     </div>

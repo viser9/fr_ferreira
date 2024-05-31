@@ -1,14 +1,17 @@
-import { CalendarForm } from "@/components/CalendarForm";
-import CustButton from "@/components/custom-components/CustButton";
-import { Calendar } from "@/components/ui/calendar";
+import { Terminal } from "lucide-react";
+
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function () {
-    return (
-        <>
-            <CustButton label="hello"/>
-            <Calendar />
-            <CalendarForm/>
-            
-        </>
-    )
+  return (
+    <>
+      <Alert>
+        <Terminal className="h-4 w-4" />
+        <AlertTitle>Heads up!</AlertTitle>
+        <AlertDescription>
+          You can add components to your app using the cli.
+        </AlertDescription>
+      </Alert>
+    </>
+  );
 }

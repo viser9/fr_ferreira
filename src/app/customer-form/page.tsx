@@ -15,7 +15,9 @@ import {
   DialogClose,
 } from "@/components/Dialog";
 import { Checkbox } from "@/components/CheckBox";
-
+import { toast } from "sonner";
+import { db } from "@/firebase.config";
+import { collection, getDocs, setDoc, doc } from "firebase/firestore";
 
 export default function SignupFormDemo() {
   const [formData, setFormData] = useState({
@@ -28,20 +30,46 @@ export default function SignupFormDemo() {
     state: "",
     phoneNo: "",
     image: "",
-    guardName: "",
     relativeName: "",
     relativeAddress: "",
     relativeNumber: "",
   });
 
-  const [errors, setErrors] = useState<{ phoneNo: string }>({
+  const [errors, setErrors] = useState<{
+    age: string;
+    gender: string;
+    dob: string;
+    address: string;
+    city: string;
+    state: string;
+    image: string;
+    relativeName: string;
+    phoneNo: string;
+    fullname: string;
+    relativeAddress: string;
+    relativeNumber: string;
+  }>({
+    age: "",
+    gender: "",
+    fullname: "",
+    dob: "",
+    address: "",
+    city: "",
+    state: "",
     phoneNo: "",
+    image: "",
+    relativeName: "",
+    relativeAddress: "",
+    relativeNumber: "",
   });
 
-  const [permission, setPermission] = useState(false);
+  const [isTermsAccepted, setIsTermsAccepted] = useState(false);
+
+  const handleCheckboxChange = () => {
+    setIsTermsAccepted(!isTermsAccepted);
+  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-
     const { id, value } = e.target;
     if (id === "phoneNo" || id === "relativeNumber") {
       setFormData((prevData) => ({
@@ -55,21 +83,84 @@ export default function SignupFormDemo() {
     }));
   };
 
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setErrors({ phoneNo: "" });
-    if (formData.phoneNo.length < 10 || formData.relativeNumber.length < 10) {
+    setErrors({
+      age: "",
+      gender: "",
+      fullname: "",
+      dob: "",
+      address: "",
+      city: "",
+      state: "",
+      phoneNo: "",
+      image: "",
+      relativeName: "",
+      relativeAddress: "",
+      relativeNumber: "",
+    });
+    if (formData.fullname.length === 0) {
+      setErrors({ ...errors, fullname: "Invalid Name" });
+      return;
+    }
+    if (formData.dob.length === 0) {
+      setErrors({ ...errors, dob: "Invalid DOB" });
+      return;
+    }
+    if (formData.age.length === 0) {
+      setErrors({ ...errors, age: "Invalid Age" });
+      return;
+    }
+    if (formData.gender.length === 0) {
+      setErrors({ ...errors, gender: "Invalid gender" });
+      return;
+    }
+    if (formData.address.length === 0) {
+      setErrors({ ...errors, address: "Invalid Address" });
+      return;
+    }
+    if (formData.city.length === 0) {
+      setErrors({ ...errors, city: "Invalid City" });
+      return;
+    }
+    if (formData.state.length === 0) {
+      setErrors({ ...errors, state: "Invalid State" });
+      return;
+    }
+    if (formData.image.length === 0) {
+      setErrors({ ...errors, image: "Invalid Image" });
+      return;
+    }
+    if (formData.phoneNo.length < 10) {
       setErrors({ ...errors, phoneNo: "Invalid Phone Number" });
       return;
     }
+    
+    if (formData.relativeName.length === 0) {
+      setErrors({ ...errors, relativeName: "Invalid Relative Name" });
+      return;
+    }
+    if (formData.relativeNumber.length < 10) {
+      setErrors({ ...errors, phoneNo: "Invalid Phone Number" });
+      return;
+    }
+    if (formData.relativeAddress.length === 0) {
+      setErrors({ ...errors, relativeAddress: "Invalid Relative Address" });
+      return;
+    }
+    if (!isTermsAccepted) {
+      toast("Please accept the terms and conditions", {
+        description:
+          "By accepting the terms and conditions you are agreeing to share the details with the institution",
+      });
+    }
+    // await setDoc(doc(db, 'USERS',formData.phoneNo), formData);
     console.log("Form Submitted", formData);
-    console.log(permission);
+    console.log(isTermsAccepted);
   };
 
-
   return (
-    <div className="flex justify-center items-center sm:h-screen">
+    <div className="flex justify-center items-center sm:h-screen m-2 sm:m-0">
       <div className="max-w-md w-full mx-auto rounded-2xl md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-gradient-to-b dark:from-neutral-950 dark:to-slate-700">
         <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
           Welcome to Ferrier
@@ -89,6 +180,9 @@ export default function SignupFormDemo() {
                 value={formData.fullname}
                 onChange={handleChange}
               />
+              {errors.fullname && (
+                <div className="text-red-500">Invalid Name</div>
+              )}
             </LabelInputContainer>
             <LabelInputContainer>
               <Label htmlFor="dob">DOB</Label>
@@ -99,6 +193,9 @@ export default function SignupFormDemo() {
                 value={formData.dob}
                 onChange={handleChange}
               />
+              {errors.dob && (
+                <div className="text-red-500">Invalid Dob</div>
+              )}
             </LabelInputContainer>
           </div>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
@@ -111,6 +208,9 @@ export default function SignupFormDemo() {
                 value={formData.age}
                 onChange={handleChange}
               />
+              {errors.age && (
+                <div className="text-red-500">Invalid age</div>
+              )}
             </LabelInputContainer>
             <LabelInputContainer>
               <Label htmlFor="gender">Gender</Label>
@@ -121,6 +221,9 @@ export default function SignupFormDemo() {
                 value={formData.gender}
                 onChange={handleChange}
               />
+              {errors.gender && (
+                <div className="text-red-500">enter gender</div>
+              )}
             </LabelInputContainer>
           </div>
 
@@ -133,6 +236,9 @@ export default function SignupFormDemo() {
               value={formData.address}
               onChange={handleChange}
             />
+            {errors.address && (
+                <div className="text-red-500">Enter address</div>
+              )}
           </LabelInputContainer>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
             <LabelInputContainer>
@@ -144,6 +250,9 @@ export default function SignupFormDemo() {
                 value={formData.city}
                 onChange={handleChange}
               />
+              {errors.city && (
+                <div className="text-red-500">Enter city</div>
+              )}
             </LabelInputContainer>
             <LabelInputContainer>
               <Label htmlFor="state">State</Label>
@@ -154,6 +263,9 @@ export default function SignupFormDemo() {
                 value={formData.state}
                 onChange={handleChange}
               />
+              {errors.state && (
+                <div className="text-red-500">Enter state</div>
+              )}
             </LabelInputContainer>
           </div>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
@@ -166,6 +278,9 @@ export default function SignupFormDemo() {
                 value={formData.image}
                 onChange={handleChange}
               />
+              {errors.image && (
+                <div className="text-red-500">Enter image uri</div>
+              )}
             </LabelInputContainer>
             <LabelInputContainer>
               <Label htmlFor="phoneNo">Phone Number</Label>
@@ -188,19 +303,17 @@ export default function SignupFormDemo() {
           </div>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
             <LabelInputContainer>
-              <Label htmlFor="relName">Relative Name</Label>
+              <Label htmlFor="relativeName">Relative Name</Label>
               <Input
                 id="relativeName"
                 placeholder="John"
                 type="text"
                 value={formData.relativeName}
-                onInput={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  event.target.value = event.target.value
-                    .replace(/[^0-9.]/g, "")
-                    .replace(/(\..*?)\..*/g, "$1");
-                }}
                 onChange={handleChange}
               />
+              {errors.relativeName && (
+                <div className="text-red-500">Enter relative name</div>
+              )}
             </LabelInputContainer>
             <LabelInputContainer>
               <Label htmlFor="relativeNumber">Relative Phone Number</Label>
@@ -209,9 +322,14 @@ export default function SignupFormDemo() {
                 placeholder="9876543210"
                 type="text"
                 value={formData.relativeNumber}
+                onInput={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  event.target.value = event.target.value
+                    .replace(/[^0-9.]/g, "")
+                    .replace(/(\..*?)\..*/g, "$1");
+                }}
                 onChange={handleChange}
               />
-              {errors.phoneNo && (
+              {errors.relativeNumber && (
                 <div className="text-red-500">Invalid Phone Number</div>
               )}
             </LabelInputContainer>
@@ -225,10 +343,13 @@ export default function SignupFormDemo() {
               value={formData.relativeAddress}
               onChange={handleChange}
             />
+            {errors.relativeAddress && (
+                <div className="text-red-500">Enter relative address</div>
+              )}
           </LabelInputContainer>
           <div className="flex font-medium text-white items-center space-x-2 m-3">
             <Dialog>
-              <Checkbox id="terms"/>
+              <Checkbox id="terms" onCheckedChange={handleCheckboxChange} />
               <DialogTrigger asChild>
                 <div className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 hover:text-gray-400">
                   Accept terms and conditions
@@ -255,7 +376,10 @@ export default function SignupFormDemo() {
             </Dialog>
           </div>
 
-          <button type="submit" className="relative px-6 py-2 font-medium rounded-lg bg-indigo-500 text-white w-fit transition shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]">
+          <button
+            type="submit"
+            className="relative px-6 py-2 font-medium rounded-lg bg-indigo-500 text-white w-fit transition shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
+          >
             Sign up &rarr;
             <BottomGradient />
           </button>

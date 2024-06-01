@@ -2,6 +2,7 @@ import { Terminal } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
+
 export default function () {
   return (
     <>
@@ -11,7 +12,7 @@ export default function () {
         <AlertDescription>
           You can add components to your app using the cli.
         </AlertDescription>
-      </Alert>
+          </Alert>
     </>
   );
 }

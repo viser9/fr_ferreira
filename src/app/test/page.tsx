@@ -1,7 +1,10 @@
+'use client';
 import { Terminal } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-
+import { Button } from "@/components/custom-components/ShadcnButton";
+import { toast } from "sonner";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function () {
   return (
@@ -12,7 +15,22 @@ export default function () {
         <AlertDescription>
           You can add components to your app using the cli.
         </AlertDescription>
-          </Alert>
+      </Alert>
+          <Button
+              variant="outline"
+        onClick={() =>
+          toast("Event has been created", {
+            description: "Sunday, December 03, 2023 at 9:00 AM",
+            action: {
+              label: "Undo",
+              onClick: () => console.log("Undo"),
+            },
+          })
+        }
+      >
+        Toast
+          </Button>
+          <Toaster/>
     </>
   );
 }

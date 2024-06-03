@@ -140,7 +140,7 @@ export default function SignupFormDemo() {
       setErrors({ ...errors, relativeName: "Invalid Relative Name" });
       return;
     }
-    if (formData.relativeNumber.length < 10) {
+    if (formData.relativeNumber.length != 10) {
       setErrors({ ...errors, phoneNo: "Invalid Phone Number" });
       return;
     }

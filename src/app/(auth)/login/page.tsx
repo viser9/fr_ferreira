@@ -14,7 +14,7 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { Input } from "@/components/ui/shadcnInput";
 import {
@@ -29,13 +29,15 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { Toast } from "@/components/custom-components/ShadcnToast";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const FormSchema = z.object({
   phone: z.string().regex(/^\d{10}$/, { message: "Invalid Phone Number" }),
 });
 
 export default function MyForm() {
+  const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     mode: "onChange",
     resolver: zodResolver(FormSchema),
@@ -51,9 +53,9 @@ export default function MyForm() {
   const [value, setValue] = useState("");
 
   const handleSubmit = async ({ phone }: z.infer<typeof FormSchema>) => {
-      if (!otpSent) {
-        console.log(phone);
-        console.log(value);
+    if (!otpSent) {
+      console.log(phone);
+      console.log(value);
       const fullPhone = "+91" + phone;
       try {
         const recaptcha = new RecaptchaVerifier(auth, "recaptcha", {});
@@ -64,25 +66,32 @@ export default function MyForm() {
         );
         console.log(confirmation);
         setUser(confirmation);
+        toast("OTP Sent Successfully", {
+          description: "Check your phone for OTP",
+        });
         setOtpSent(true);
       } catch (err) {
         console.log(err);
       }
+    } else {
+      if (user) {
+        try {
+          await user.confirm(value);
+          console.log("User confirmed");
+          toast("otp confirmed", {
+            description: "OTP Confirmed Successfully",
+          });
+          setTimeout(() => {
+            router.push("/customer-form");
+          }, 3000);
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        console.log("User confirmation is not available.");
       }
-      else {
-        if (user) {
-            try {
-              await user.confirm(value);
-                console.log("User confirmed");
-            } catch (err) {
-              console.log(err);
-            }
-          } else {
-            console.log("User confirmation is not available.");
-          }
-      }
+    }
   };
-
 
   useEffect(() => {
     if (submitError) {

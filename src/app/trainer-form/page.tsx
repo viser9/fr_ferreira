@@ -3,6 +3,7 @@ import React, { useState, ChangeEvent } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/utils/cn";
+import { CalendarForm } from "@/components/CalendarForm";
 import {
   Dialog,
   DialogContent,
@@ -25,13 +26,23 @@ export default function SignupFormDemo() {
     fullname: "",
     dob: "",
     address: "",
-    city: "",
-    state: "",
     phoneNo: "",
     image: "",
-    relativeName: "",
-    relativeAddress: "",
-    relativeNumber: "",
+    healthStatus: "",
+    maritalStatus: "",
+    presentOccupation: "",
+    guardianName: "",
+    batch: "",
+    courseTitle: "",
+    instituteName: "",
+    percentage: "",
+    yearofPassing: "",
+    education: {
+      courseTitle: "",
+      instituteName: "",
+      percentage: "",
+      yearofPassing: ""
+    }
   });
 
   const [errors, setErrors] = useState<{
@@ -39,27 +50,36 @@ export default function SignupFormDemo() {
     gender: string;
     dob: string;
     address: string;
-    city: string;
-    state: string;
     image: string;
-    relativeName: string;
     phoneNo: string;
     fullname: string;
-    relativeAddress: string;
-    relativeNumber: string;
+    healthStatus: string;
+    maritalStatus: string;
+    presentOccupation: string;
+    guardianName: string;
+    batch: string;
+    courseTitle: string;
+    instituteName: string;
+    percentage: string;
+    yearofPassing: string;
+
   }>({
     age: "",
     gender: "",
     fullname: "",
     dob: "",
     address: "",
-    city: "",
-    state: "",
     phoneNo: "",
     image: "",
-    relativeName: "",
-    relativeAddress: "",
-    relativeNumber: "",
+    healthStatus: "",
+    maritalStatus: "",
+    presentOccupation: "",
+    guardianName: "",
+    batch: "",
+    courseTitle: "",
+    instituteName: "",
+    percentage: "",
+    yearofPassing: "",
   });
 
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
@@ -70,7 +90,7 @@ export default function SignupFormDemo() {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    if (id === "phoneNo" || id === "relativeNumber") {
+    if (id === "phoneNo") {
       setFormData((prevData) => ({
         ...prevData,
         [id]: "+91" + value,
@@ -90,13 +110,17 @@ export default function SignupFormDemo() {
       fullname: "",
       dob: "",
       address: "",
-      city: "",
-      state: "",
       phoneNo: "",
       image: "",
-      relativeName: "",
-      relativeAddress: "",
-      relativeNumber: "",
+      healthStatus: "",
+      maritalStatus: "",
+      presentOccupation: "",
+      guardianName: "",
+      batch: "",
+      courseTitle: "",
+      instituteName: "",
+      percentage: "",
+      yearofPassing: "",
     });
     if (formData.fullname.length === 0) {
       setErrors({ ...errors, fullname: "Invalid Name" });
@@ -118,33 +142,45 @@ export default function SignupFormDemo() {
       setErrors({ ...errors, address: "Invalid Address" });
       return;
     }
-    if (formData.city.length === 0) {
-      setErrors({ ...errors, city: "Invalid City" });
+    if (formData.maritalStatus.length === 0) {
+      setErrors({ ...errors, maritalStatus: "Invalid Status" });
       return;
     }
-    if (formData.state.length === 0) {
-      setErrors({ ...errors, state: "Invalid State" });
+    if (formData.presentOccupation.length === 0) {
+      setErrors({ ...errors, presentOccupation: "Invalid Input" });
       return;
     }
     if (formData.image.length === 0) {
       setErrors({ ...errors, image: "Invalid Image" });
       return;
     }
-    if (formData.phoneNo.length < 10) {
+    if (formData.phoneNo.length != 10) {
       setErrors({ ...errors, phoneNo: "Invalid Phone Number" });
       return;
     }
     
-    if (formData.relativeName.length === 0) {
-      setErrors({ ...errors, relativeName: "Invalid Relative Name" });
+    if (formData.batch.length === 0) {
+      setErrors({ ...errors, batch: "Invalid Batch" });
       return;
     }
-    if (formData.relativeNumber.length < 10) {
-      setErrors({ ...errors, phoneNo: "Invalid Phone Number" });
+    if (formData.healthStatus.length === 0) {
+      setErrors({ ...errors, phoneNo: "Please enter fine if no health conditions" });
       return;
     }
-    if (formData.relativeAddress.length === 0) {
-      setErrors({ ...errors, relativeAddress: "Invalid Relative Address" });
+    if (formData.courseTitle.length === 0) {
+      setErrors({ ...errors, courseTitle: "Invalid course" });
+      return;
+    }
+    if (formData.instituteName.length === 0) { 
+      setErrors({ ...errors, instituteName: "Invalid Institute" });
+      return;
+    }
+    if (formData.percentage.length === 0) {
+      setErrors({ ...errors, percentage: "Invalid Percentage" });
+      return;
+    }
+    if (formData.yearofPassing.length === 0) {
+      setErrors({ ...errors, yearofPassing: "Invalid Year" });
       return;
     }
     if (!isTermsAccepted) {
@@ -153,13 +189,24 @@ export default function SignupFormDemo() {
           "By accepting the terms and conditions you are agreeing to share the details with the institution",
       });
     }
+    setFormData((prevState) => ({
+      ...prevState,
+      education: {
+        ...prevState.education,
+        courseTitle: formData.courseTitle,
+        yearofPassing: formData.yearofPassing,
+        percentage: formData.percentage,
+        instituteName: formData.instituteName,
+      }
+    }));
+
     // await setDoc(doc(db, 'USERS',formData.phoneNo), formData);
     console.log("Form Submitted", formData);
     console.log(isTermsAccepted);
   };
 
   return (
-    <div className="flex justify-center items-center sm:h-screen m-2 sm:m-0">
+    <div className="flex justify-center items-center sm:h-full  m-2 sm:m-0">
       <div className="max-w-md w-full mx-auto rounded-2xl md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-gradient-to-b dark:from-neutral-950 dark:to-slate-700">
         <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
           Welcome to Ferrier
@@ -239,34 +286,19 @@ export default function SignupFormDemo() {
                 <div className="text-red-500">Enter address</div>
               )}
           </LabelInputContainer>
-          <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
-            <LabelInputContainer>
-              <Label htmlFor="city">City</Label>
+          <LabelInputContainer className="mb-4">
+              <Label htmlFor="batch">Batch</Label>
               <Input
-                id="city"
-                placeholder="london"
+                id="batch"
+                placeholder="1st"
                 type="text"
-                value={formData.city}
+                value={formData.batch}
                 onChange={handleChange}
               />
-              {errors.city && (
-                <div className="text-red-500">Enter city</div>
+              {errors.batch && (
+                <div className="text-red-500">Enter batch</div>
               )}
             </LabelInputContainer>
-            <LabelInputContainer>
-              <Label htmlFor="state">State</Label>
-              <Input
-                id="state"
-                placeholder="solid"
-                type="text"
-                value={formData.state}
-                onChange={handleChange}
-              />
-              {errors.state && (
-                <div className="text-red-500">Enter state</div>
-              )}
-            </LabelInputContainer>
-          </div>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
             <LabelInputContainer>
               <Label htmlFor="image">Image</Label>
@@ -300,52 +332,117 @@ export default function SignupFormDemo() {
               )}
             </LabelInputContainer>
           </div>
-          <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
-            <LabelInputContainer>
-              <Label htmlFor="relativeName">Relative Name</Label>
+          <LabelInputContainer className="mb-4">
+              <Label htmlFor="healthStatus">Health Status</Label>
               <Input
-                id="relativeName"
-                placeholder="John"
+                id="healthStatus"
+                placeholder="healthy"
                 type="text"
-                value={formData.relativeName}
+                value={formData.healthStatus}
                 onChange={handleChange}
               />
-              {errors.relativeName && (
-                <div className="text-red-500">Enter relative name</div>
-              )}
-            </LabelInputContainer>
-            <LabelInputContainer>
-              <Label htmlFor="relativeNumber">Relative Phone Number</Label>
-              <Input
-                id="relativeNumber"
-                placeholder="9876543210"
-                type="text"
-                value={formData.relativeNumber}
-                onInput={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  event.target.value = event.target.value
-                    .replace(/[^0-9.]/g, "")
-                    .replace(/(\..*?)\..*/g, "$1");
-                }}
-                onChange={handleChange}
-              />
-              {errors.relativeNumber && (
+              {errors.healthStatus && (
                 <div className="text-red-500">Invalid Phone Number</div>
               )}
             </LabelInputContainer>
-          </div>
           <LabelInputContainer className="mb-4">
-            <Label htmlFor="relativeAddress">Relative Address</Label>
+            <Label htmlFor="guardinanName">Enter Guardian Name</Label>
             <Input
-              id="relativeAddress"
-              placeholder="24-bermingham palace"
+              id="guardianName"
+              placeholder="Joel"
               type="text"
-              value={formData.relativeAddress}
+              value={formData.guardianName}
               onChange={handleChange}
             />
-            {errors.relativeAddress && (
-                <div className="text-red-500">Enter relative address</div>
+            {errors.guardianName && (
+                <div className="text-red-500">Enter Guardian Name</div>
               )}
           </LabelInputContainer>
+          <LabelInputContainer className="mb-4">
+            <Label htmlFor="maritalStatus">Enter Marital Status</Label>
+            <Input
+              id="maritalStatus"
+              placeholder="married"
+              type="text"
+              value={formData.maritalStatus}
+              onChange={handleChange}
+            />
+            {errors.maritalStatus && (
+                <div className="text-red-500">Enter marital status</div>
+              )}
+          </LabelInputContainer>
+          <LabelInputContainer className="mb-4">
+            <Label htmlFor="presentOccupation">Enter present occupation</Label>
+            <Input
+              id="presentOccupation"
+              placeholder="yoga instructor"
+              type="text"
+              value={formData.presentOccupation}
+              onChange={handleChange}
+            />
+            {errors.presentOccupation && (
+                <div className="text-red-500">Enter Present Occupation</div>
+              )}
+          </LabelInputContainer>
+          <div className="border-t border-grey mb-4"></div>
+          <div className="text-white mb-4 font-semibold">Education Details</div>
+          <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
+            <LabelInputContainer>
+            <Label htmlFor="yearofPassing">Enter year of Passing</Label>
+            <Input
+              id="yearofPassing"
+              placeholder="2021"
+              type="text"
+              value={formData.yearofPassing}
+              onChange={handleChange}
+            />
+            {errors.yearofPassing && (
+                <div className="text-red-500">Enter year of Passing</div>
+              )}
+          </LabelInputContainer>
+            <LabelInputContainer>
+              <Label htmlFor="courseTitle">Course Title</Label>
+              <Input
+                id="courseTitle"
+                placeholder="solid"
+                type="text"
+                value={formData.courseTitle}
+                onChange={handleChange}
+              />
+              {errors.courseTitle && (
+                <div className="text-red-500">Enter Course Title</div>
+              )}
+            </LabelInputContainer>
+          </div>
+          <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
+            <LabelInputContainer>
+              <Label htmlFor="instituteName">Institute Name</Label>
+              <Input
+                id="instituteName"
+                placeholder="None"
+                type="text"
+                value={formData.instituteName}
+                onChange={handleChange}
+              />
+              {errors.instituteName && (
+                <div className="text-red-500">Enter Institute Name</div>
+              )}
+            </LabelInputContainer>
+            <LabelInputContainer >
+            <Label htmlFor="percentage">Enter Percentage</Label>
+            <Input
+              id="percentage"
+              placeholder="75%"
+              type="text"
+              value={formData.percentage}
+              onChange={handleChange}
+            />
+            {errors.percentage && (
+                <div className="text-red-500">Enter percentage</div>
+              )}
+          </LabelInputContainer>
+          </div>
+          
           <div className="flex font-medium text-white items-center space-x-2 m-3">
             <Dialog>
               <Checkbox id="terms" onCheckedChange={handleCheckboxChange} />

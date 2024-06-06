@@ -30,9 +30,9 @@ export default function SignupFormDemo() {
     state: "",
     phoneNo: "",
     image: "",
-    relativeName: "",
-    relativeAddress: "",
-    relativeNumber: "",
+    allergy: "",
+    healthStatus: "",
+    medicine:"",
   });
 
   const [errors, setErrors] = useState<{
@@ -43,11 +43,11 @@ export default function SignupFormDemo() {
     city: string;
     state: string;
     image: string;
-    relativeName: string;
+    allergy: string;
     phoneNo: string;
     fullname: string;
-    relativeAddress: string;
-    relativeNumber: string;
+    healthStatus: string;
+    medicine: string;
   }>({
     age: "",
     gender: "",
@@ -58,9 +58,9 @@ export default function SignupFormDemo() {
     state: "",
     phoneNo: "",
     image: "",
-    relativeName: "",
-    relativeAddress: "",
-    relativeNumber: "",
+    allergy: "",
+    healthStatus: "",
+    medicine: "",
   });
 
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
@@ -71,7 +71,7 @@ export default function SignupFormDemo() {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    if (id === "phoneNo" || id === "relativeNumber") {
+    if (id === "phoneNo") {
       setFormData((prevData) => ({
         ...prevData,
         [id]: "+91" + value,
@@ -95,9 +95,9 @@ export default function SignupFormDemo() {
       state: "",
       phoneNo: "",
       image: "",
-      relativeName: "",
-      relativeAddress: "",
-      relativeNumber: "",
+      allergy: "",
+      healthStatus: "",
+      medicine: "",
     });
     if (formData.fullname.length === 0) {
       setErrors({ ...errors, fullname: "Invalid Name" });
@@ -131,21 +131,21 @@ export default function SignupFormDemo() {
       setErrors({ ...errors, image: "Invalid Image" });
       return;
     }
-    if (formData.phoneNo.length < 10) {
+    if (formData.phoneNo.length != 10) {
       setErrors({ ...errors, phoneNo: "Invalid Phone Number" });
       return;
     }
     
-    if (formData.relativeName.length === 0) {
-      setErrors({ ...errors, relativeName: "Invalid Relative Name" });
+    if (formData.allergy.length === 0) {
+      setErrors({ ...errors, allergy: "Please enter none if not any" });
       return;
     }
-    if (formData.relativeNumber.length != 10) {
-      setErrors({ ...errors, phoneNo: "Invalid Phone Number" });
+    if (formData.healthStatus.length == 10) {
+      setErrors({ ...errors, phoneNo: "Please enter fine if no health conditions" });
       return;
     }
-    if (formData.relativeAddress.length === 0) {
-      setErrors({ ...errors, relativeAddress: "Invalid Relative Address" });
+    if (formData.medicine.length === 0) {
+      setErrors({ ...errors, medicine: "Please enter none if not under any mediciation" });
       return;
     }
     if (!isTermsAccepted) {
@@ -303,47 +303,42 @@ export default function SignupFormDemo() {
           </div>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
             <LabelInputContainer>
-              <Label htmlFor="relativeName">Relative Name</Label>
+              <Label htmlFor="allergy">Allergy</Label>
               <Input
-                id="relativeName"
-                placeholder="John"
+                id="allergy"
+                placeholder="None"
                 type="text"
-                value={formData.relativeName}
+                value={formData.allergy}
                 onChange={handleChange}
               />
-              {errors.relativeName && (
+              {errors.allergy && (
                 <div className="text-red-500">Enter relative name</div>
               )}
             </LabelInputContainer>
             <LabelInputContainer>
-              <Label htmlFor="relativeNumber">Relative Phone Number</Label>
+              <Label htmlFor="healthStatus">Health Status</Label>
               <Input
-                id="relativeNumber"
-                placeholder="9876543210"
+                id="healthStatus"
+                placeholder="healthy"
                 type="text"
-                value={formData.relativeNumber}
-                onInput={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  event.target.value = event.target.value
-                    .replace(/[^0-9.]/g, "")
-                    .replace(/(\..*?)\..*/g, "$1");
-                }}
+                value={formData.healthStatus}
                 onChange={handleChange}
               />
-              {errors.relativeNumber && (
+              {errors.healthStatus && (
                 <div className="text-red-500">Invalid Phone Number</div>
               )}
             </LabelInputContainer>
           </div>
           <LabelInputContainer className="mb-4">
-            <Label htmlFor="relativeAddress">Relative Address</Label>
+            <Label htmlFor="medicine">Medicine Prescription</Label>
             <Input
-              id="relativeAddress"
-              placeholder="24-bermingham palace"
+              id="medicine"
+              placeholder="Metformin"
               type="text"
-              value={formData.relativeAddress}
+              value={formData.medicine}
               onChange={handleChange}
             />
-            {errors.relativeAddress && (
+            {errors.medicine && (
                 <div className="text-red-500">Enter relative address</div>
               )}
           </LabelInputContainer>

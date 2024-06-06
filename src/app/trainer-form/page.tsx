@@ -33,16 +33,12 @@ export default function SignupFormDemo() {
     presentOccupation: "",
     guardianName: "",
     batch: "",
-    courseTitle: "",
-    instituteName: "",
-    percentage: "",
-    yearofPassing: "",
     education: {
       courseTitle: "",
       instituteName: "",
       percentage: "",
-      yearofPassing: ""
-    }
+      yearofPassing: "",
+    },
   });
 
   const [errors, setErrors] = useState<{
@@ -62,7 +58,6 @@ export default function SignupFormDemo() {
     instituteName: string;
     percentage: string;
     yearofPassing: string;
-
   }>({
     age: "",
     gender: "",
@@ -96,10 +91,23 @@ export default function SignupFormDemo() {
         [id]: "+91" + value,
       }));
     }
-    setFormData((prevData) => ({
-      ...prevData,
-      [id]: value,
-    }));
+    if (id.includes(".")) {
+      const [parent, child] = id.split(".");
+      if (parent === "education") {
+        setFormData((prevState) => ({
+          ...prevState,
+          education: {
+            ...prevState.education,
+            [child]: value,
+          },
+        }));
+      }
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        [id]: value,
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -158,28 +166,31 @@ export default function SignupFormDemo() {
       setErrors({ ...errors, phoneNo: "Invalid Phone Number" });
       return;
     }
-    
+
     if (formData.batch.length === 0) {
       setErrors({ ...errors, batch: "Invalid Batch" });
       return;
     }
     if (formData.healthStatus.length === 0) {
-      setErrors({ ...errors, phoneNo: "Please enter fine if no health conditions" });
+      setErrors({
+        ...errors,
+        phoneNo: "Please enter fine if no health conditions",
+      });
       return;
     }
-    if (formData.courseTitle.length === 0) {
+    if (formData.education.courseTitle.length === 0) {
       setErrors({ ...errors, courseTitle: "Invalid course" });
       return;
     }
-    if (formData.instituteName.length === 0) { 
+    if (formData.education.instituteName.length === 0) {
       setErrors({ ...errors, instituteName: "Invalid Institute" });
       return;
     }
-    if (formData.percentage.length === 0) {
+    if (formData.education.percentage.length === 0) {
       setErrors({ ...errors, percentage: "Invalid Percentage" });
       return;
     }
-    if (formData.yearofPassing.length === 0) {
+    if (formData.education.yearofPassing.length === 0) {
       setErrors({ ...errors, yearofPassing: "Invalid Year" });
       return;
     }
@@ -189,16 +200,6 @@ export default function SignupFormDemo() {
           "By accepting the terms and conditions you are agreeing to share the details with the institution",
       });
     }
-    setFormData((prevState) => ({
-      ...prevState,
-      education: {
-        ...prevState.education,
-        courseTitle: formData.courseTitle,
-        yearofPassing: formData.yearofPassing,
-        percentage: formData.percentage,
-        instituteName: formData.instituteName,
-      }
-    }));
 
     // await setDoc(doc(db, 'USERS',formData.phoneNo), formData);
     console.log("Form Submitted", formData);
@@ -239,9 +240,7 @@ export default function SignupFormDemo() {
                 value={formData.dob}
                 onChange={handleChange}
               />
-              {errors.dob && (
-                <div className="text-red-500">Invalid Dob</div>
-              )}
+              {errors.dob && <div className="text-red-500">Invalid Dob</div>}
             </LabelInputContainer>
           </div>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
@@ -254,9 +253,7 @@ export default function SignupFormDemo() {
                 value={formData.age}
                 onChange={handleChange}
               />
-              {errors.age && (
-                <div className="text-red-500">Invalid age</div>
-              )}
+              {errors.age && <div className="text-red-500">Invalid age</div>}
             </LabelInputContainer>
             <LabelInputContainer>
               <Label htmlFor="gender">Gender</Label>
@@ -283,22 +280,20 @@ export default function SignupFormDemo() {
               onChange={handleChange}
             />
             {errors.address && (
-                <div className="text-red-500">Enter address</div>
-              )}
+              <div className="text-red-500">Enter address</div>
+            )}
           </LabelInputContainer>
           <LabelInputContainer className="mb-4">
-              <Label htmlFor="batch">Batch</Label>
-              <Input
-                id="batch"
-                placeholder="1st"
-                type="text"
-                value={formData.batch}
-                onChange={handleChange}
-              />
-              {errors.batch && (
-                <div className="text-red-500">Enter batch</div>
-              )}
-            </LabelInputContainer>
+            <Label htmlFor="batch">Batch</Label>
+            <Input
+              id="batch"
+              placeholder="1st"
+              type="text"
+              value={formData.batch}
+              onChange={handleChange}
+            />
+            {errors.batch && <div className="text-red-500">Enter batch</div>}
+          </LabelInputContainer>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
             <LabelInputContainer>
               <Label htmlFor="image">Image</Label>
@@ -333,18 +328,18 @@ export default function SignupFormDemo() {
             </LabelInputContainer>
           </div>
           <LabelInputContainer className="mb-4">
-              <Label htmlFor="healthStatus">Health Status</Label>
-              <Input
-                id="healthStatus"
-                placeholder="healthy"
-                type="text"
-                value={formData.healthStatus}
-                onChange={handleChange}
-              />
-              {errors.healthStatus && (
-                <div className="text-red-500">Invalid Phone Number</div>
-              )}
-            </LabelInputContainer>
+            <Label htmlFor="healthStatus">Health Status</Label>
+            <Input
+              id="healthStatus"
+              placeholder="healthy"
+              type="text"
+              value={formData.healthStatus}
+              onChange={handleChange}
+            />
+            {errors.healthStatus && (
+              <div className="text-red-500">Invalid Phone Number</div>
+            )}
+          </LabelInputContainer>
           <LabelInputContainer className="mb-4">
             <Label htmlFor="guardinanName">Enter Guardian Name</Label>
             <Input
@@ -355,8 +350,8 @@ export default function SignupFormDemo() {
               onChange={handleChange}
             />
             {errors.guardianName && (
-                <div className="text-red-500">Enter Guardian Name</div>
-              )}
+              <div className="text-red-500">Enter Guardian Name</div>
+            )}
           </LabelInputContainer>
           <LabelInputContainer className="mb-4">
             <Label htmlFor="maritalStatus">Enter Marital Status</Label>
@@ -368,8 +363,8 @@ export default function SignupFormDemo() {
               onChange={handleChange}
             />
             {errors.maritalStatus && (
-                <div className="text-red-500">Enter marital status</div>
-              )}
+              <div className="text-red-500">Enter marital status</div>
+            )}
           </LabelInputContainer>
           <LabelInputContainer className="mb-4">
             <Label htmlFor="presentOccupation">Enter present occupation</Label>
@@ -381,32 +376,32 @@ export default function SignupFormDemo() {
               onChange={handleChange}
             />
             {errors.presentOccupation && (
-                <div className="text-red-500">Enter Present Occupation</div>
-              )}
+              <div className="text-red-500">Enter Present Occupation</div>
+            )}
           </LabelInputContainer>
           <div className="border-t border-grey mb-4"></div>
           <div className="text-white mb-4 font-semibold">Education Details</div>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
             <LabelInputContainer>
-            <Label htmlFor="yearofPassing">Enter year of Passing</Label>
-            <Input
-              id="yearofPassing"
-              placeholder="2021"
-              type="text"
-              value={formData.yearofPassing}
-              onChange={handleChange}
-            />
-            {errors.yearofPassing && (
+              <Label htmlFor="yearofPassing">Enter year of Passing</Label>
+              <Input
+                id="education.yearofPassing"
+                placeholder="2021"
+                type="text"
+                value={formData.education.yearofPassing}
+                onChange={handleChange}
+              />
+              {errors.yearofPassing && (
                 <div className="text-red-500">Enter year of Passing</div>
               )}
-          </LabelInputContainer>
+            </LabelInputContainer>
             <LabelInputContainer>
               <Label htmlFor="courseTitle">Course Title</Label>
               <Input
-                id="courseTitle"
+                id="education.courseTitle"
                 placeholder="solid"
                 type="text"
-                value={formData.courseTitle}
+                value={formData.education.courseTitle}
                 onChange={handleChange}
               />
               {errors.courseTitle && (
@@ -418,31 +413,31 @@ export default function SignupFormDemo() {
             <LabelInputContainer>
               <Label htmlFor="instituteName">Institute Name</Label>
               <Input
-                id="instituteName"
+                id="education.instituteName"
                 placeholder="None"
                 type="text"
-                value={formData.instituteName}
+                value={formData.education.instituteName}
                 onChange={handleChange}
               />
               {errors.instituteName && (
                 <div className="text-red-500">Enter Institute Name</div>
               )}
             </LabelInputContainer>
-            <LabelInputContainer >
-            <Label htmlFor="percentage">Enter Percentage</Label>
-            <Input
-              id="percentage"
-              placeholder="75%"
-              type="text"
-              value={formData.percentage}
-              onChange={handleChange}
-            />
-            {errors.percentage && (
+            <LabelInputContainer>
+              <Label htmlFor="percentage">Enter Percentage</Label>
+              <Input
+                id="education.percentage"
+                placeholder="75%"
+                type="text"
+                value={formData.education.percentage}
+                onChange={handleChange}
+              />
+              {errors.percentage && (
                 <div className="text-red-500">Enter percentage</div>
               )}
-          </LabelInputContainer>
+            </LabelInputContainer>
           </div>
-          
+
           <div className="flex font-medium text-white items-center space-x-2 m-3">
             <Dialog>
               <Checkbox id="terms" onCheckedChange={handleCheckboxChange} />

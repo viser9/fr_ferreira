@@ -18,8 +18,16 @@ import { Checkbox } from "@/components/CheckBox";
 import { toast } from "sonner";
 import { db } from "@/firebase.config";
 import { collection, getDocs, setDoc, doc } from "firebase/firestore";
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  UploadTaskSnapshot,
+} from "firebase/storage";
+import { storage } from "@/firebase.config";
 
 export default function SignupFormDemo() {
+  const [image, setImage] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     age: "",
     gender: "",
@@ -29,10 +37,10 @@ export default function SignupFormDemo() {
     city: "",
     state: "",
     phoneNo: "",
-    image: "",
+    photoUrl: "",
     allergy: "",
     healthStatus: "",
-    medicine:"",
+    medicine: "",
   });
 
   const [errors, setErrors] = useState<{
@@ -42,7 +50,7 @@ export default function SignupFormDemo() {
     address: string;
     city: string;
     state: string;
-    image: string;
+    photoUrl: string;
     allergy: string;
     phoneNo: string;
     fullname: string;
@@ -57,7 +65,7 @@ export default function SignupFormDemo() {
     city: "",
     state: "",
     phoneNo: "",
-    image: "",
+    photoUrl: "",
     allergy: "",
     healthStatus: "",
     medicine: "",
@@ -77,10 +85,46 @@ export default function SignupFormDemo() {
         [id]: "+91" + value,
       }));
     }
+
+    if (id === "image") {
+      if (e.target.files && e.target.files[0]) {
+        setImage(e.target.files[0]);
+      }
+    }
     setFormData((prevData) => ({
       ...prevData,
       [id]: value,
     }));
+  };
+  const handleUpload = async () => {
+    console.log(image);
+    if (image) {
+      const storageRef = ref(storage, "images/" + image.name);
+      const uploadTask = uploadBytesResumable(storageRef, image);
+      uploadTask.on(
+        "state_changed",
+        (snapshot: UploadTaskSnapshot) => {
+          const porgress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(`upload is ${porgress}% done`);
+        },
+        (error) => {
+          console.log(error);
+        },
+        async () => {
+          // This function executes once the upload completes successfully
+          try {
+            const url = await getDownloadURL(uploadTask.snapshot.ref);
+            setFormData((prevData: any) => ({
+              ...prevData,
+              photoUrl: url,
+            }));
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      );
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -94,7 +138,7 @@ export default function SignupFormDemo() {
       city: "",
       state: "",
       phoneNo: "",
-      image: "",
+      photoUrl: "",
       allergy: "",
       healthStatus: "",
       medicine: "",
@@ -127,25 +171,31 @@ export default function SignupFormDemo() {
       setErrors({ ...errors, state: "Invalid State" });
       return;
     }
-    if (formData.image.length === 0) {
-      setErrors({ ...errors, image: "Invalid Image" });
+    if (formData.photoUrl.length === 0) {
+      setErrors({ ...errors, photoUrl: "Please save image" });
       return;
     }
     if (formData.phoneNo.length != 10) {
       setErrors({ ...errors, phoneNo: "Invalid Phone Number" });
       return;
     }
-    
+
     if (formData.allergy.length === 0) {
       setErrors({ ...errors, allergy: "Please enter none if not any" });
       return;
     }
     if (formData.healthStatus.length == 10) {
-      setErrors({ ...errors, phoneNo: "Please enter fine if no health conditions" });
+      setErrors({
+        ...errors,
+        phoneNo: "Please enter fine if no health conditions",
+      });
       return;
     }
     if (formData.medicine.length === 0) {
-      setErrors({ ...errors, medicine: "Please enter none if not under any mediciation" });
+      setErrors({
+        ...errors,
+        medicine: "Please enter none if not under any mediciation",
+      });
       return;
     }
     if (!isTermsAccepted) {
@@ -160,7 +210,7 @@ export default function SignupFormDemo() {
   };
 
   return (
-    <div className="flex justify-center items-center sm:h-screen m-2 sm:m-0">
+    <div className="flex justify-center items-center sm:h-full m-5 sm:m-0">
       <div className="max-w-md w-full mx-auto rounded-2xl md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-gradient-to-b dark:from-neutral-950 dark:to-slate-700">
         <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
           Welcome to Ferrier
@@ -193,9 +243,7 @@ export default function SignupFormDemo() {
                 value={formData.dob}
                 onChange={handleChange}
               />
-              {errors.dob && (
-                <div className="text-red-500">Invalid Dob</div>
-              )}
+              {errors.dob && <div className="text-red-500">Invalid Dob</div>}
             </LabelInputContainer>
           </div>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
@@ -208,9 +256,7 @@ export default function SignupFormDemo() {
                 value={formData.age}
                 onChange={handleChange}
               />
-              {errors.age && (
-                <div className="text-red-500">Invalid age</div>
-              )}
+              {errors.age && <div className="text-red-500">Invalid age</div>}
             </LabelInputContainer>
             <LabelInputContainer>
               <Label htmlFor="gender">Gender</Label>
@@ -237,8 +283,8 @@ export default function SignupFormDemo() {
               onChange={handleChange}
             />
             {errors.address && (
-                <div className="text-red-500">Enter address</div>
-              )}
+              <div className="text-red-500">Enter address</div>
+            )}
           </LabelInputContainer>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
             <LabelInputContainer>
@@ -250,9 +296,7 @@ export default function SignupFormDemo() {
                 value={formData.city}
                 onChange={handleChange}
               />
-              {errors.city && (
-                <div className="text-red-500">Enter city</div>
-              )}
+              {errors.city && <div className="text-red-500">Enter city</div>}
             </LabelInputContainer>
             <LabelInputContainer>
               <Label htmlFor="state">State</Label>
@@ -263,25 +307,10 @@ export default function SignupFormDemo() {
                 value={formData.state}
                 onChange={handleChange}
               />
-              {errors.state && (
-                <div className="text-red-500">Enter state</div>
-              )}
+              {errors.state && <div className="text-red-500">Enter state</div>}
             </LabelInputContainer>
           </div>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
-            <LabelInputContainer>
-              <Label htmlFor="image">Image</Label>
-              <Input
-                id="image"
-                placeholder="image"
-                type="text"
-                value={formData.image}
-                onChange={handleChange}
-              />
-              {errors.image && (
-                <div className="text-red-500">Enter image uri</div>
-              )}
-            </LabelInputContainer>
             <LabelInputContainer>
               <Label htmlFor="phoneNo">Phone Number</Label>
               <Input
@@ -301,6 +330,26 @@ export default function SignupFormDemo() {
               )}
             </LabelInputContainer>
           </div>
+          <LabelInputContainer>
+            <Label htmlFor="image">Image</Label>
+            <Input
+              id="image"
+              placeholder="image"
+              type="file"
+              onChange={handleChange}
+              className="text"
+            />
+            {errors.photoUrl && (
+              <div className="text-red-500">Enter image uri</div>
+            )}
+          </LabelInputContainer>
+          <button
+            onClick={handleUpload}
+            className="relative px-4 py-1 font-small m-2 rounded-lg bg-indigo-500 text-white w-fit transition shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
+          >
+            Save image
+            <BottomGradient />
+          </button>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
             <LabelInputContainer>
               <Label htmlFor="allergy">Allergy</Label>
@@ -339,8 +388,8 @@ export default function SignupFormDemo() {
               onChange={handleChange}
             />
             {errors.medicine && (
-                <div className="text-red-500">Enter relative address</div>
-              )}
+              <div className="text-red-500">Enter relative address</div>
+            )}
           </LabelInputContainer>
           <div className="flex font-medium text-white items-center space-x-2 m-3">
             <Dialog>

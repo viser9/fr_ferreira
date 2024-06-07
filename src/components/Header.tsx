@@ -54,17 +54,18 @@ export default function Header() {
                   href={item.href}
                   className="text-md font-semibold text-gray-800 hover:text-gray-900"
                 >
-                  {item.name}
+                  {/* {item.name} */}
+                  <CustButton label={item.name} />
                 </a>
               </li>
             ))}
           </ul>
         </div>
         <div className="hidden lg:block">
-          <CustButton label="sign-in"/>
+          <CustButton label="sign-in" />
         </div>
         <div className="lg:hidden">
-          <Menu onClick={toggleMenu} className="h-6 w-6 cursor-pointer" />
+          <Menu onClick={toggleMenu} className="h-5 w-6 cursor-pointer" />
         </div>
         {isMenuOpen && (
           <div className="absolute inset-x-0 top-0 z-50 origin-top-right transform p-2 transition lg:hidden">
@@ -115,10 +116,9 @@ export default function Header() {
                   </nav>
                 </div>
                 <button
-                  type="button"
-                  className="mt-4 w-full rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                  className="relative px-4 py-1 mt-4 font-small m-2 rounded-lg bg-indigo-500 text-white w-fit transition shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
                 >
-                  Button text
+                  Save image
                 </button>
               </div>
             </div>

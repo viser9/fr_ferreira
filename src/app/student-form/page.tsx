@@ -99,7 +99,7 @@ export default function SignupFormDemo() {
   const handleUpload = async () => {
     console.log(image);
     if (image) {
-      const storageRef = ref(storage, "images/" + image.name);
+      const storageRef = ref(storage, "UserImages/" + image.name);
       const uploadTask = uploadBytesResumable(storageRef, image);
       uploadTask.on(
         "state_changed",

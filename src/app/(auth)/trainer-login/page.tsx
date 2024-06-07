@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/input-otp";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import Cookies from "js-cookie";
 
 const FormSchema = z.object({
   phone: z.string().regex(/^\d{10}$/, { message: "Invalid Phone Number" }),
@@ -77,15 +78,19 @@ export default function MyForm() {
       if (user) {
         try {
           await user.confirm(value);
+          Cookies.set("auth", JSON.stringify(user));
           console.log("User confirmed");
           toast("otp confirmed", {
             description: "OTP Confirmed Successfully",
           });
           setTimeout(() => {
-            router.push("/customer-form");
+            router.push("/trainer-form");
           }, 3000);
         } catch (err) {
           console.log(err);
+          toast("Error", {
+            description: "Error sending OTP",
+          });
         }
       } else {
         console.log("User confirmation is not available.");
@@ -121,6 +126,9 @@ export default function MyForm() {
             <FormDescription className="text-white">
               An all-In-One Collaboration and Productivity Platform
             </FormDescription>
+            <div className="text-white font-bold">
+              Login as an instructor
+            </div>
             {otpSent ? (
               <>
                 <div className="space-y-2 flex flex-col justify-center items-center">
